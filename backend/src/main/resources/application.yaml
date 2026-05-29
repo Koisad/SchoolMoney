@@ -1,1 +1,6 @@
-spring.application.name=schoolmoney
+spring:
+  application:
+    name: schoolmoney
+  data:
+    mongodb:
+      uri: mongodb://admin:admin@localhost:27017/schoolmoney_db?authSource=admin

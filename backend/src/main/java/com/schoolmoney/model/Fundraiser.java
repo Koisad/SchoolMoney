@@ -46,4 +46,7 @@ public class Fundraiser {
 
     @Builder.Default
     private boolean isBlocked = false;
+
+    @Builder.Default
+    private boolean isPublic = false;
 }

@@ -1,34 +1,27 @@
 package com.schoolmoney.controller;
 
-import com.schoolmoney.dto.ChatMessageRequest;
 import com.schoolmoney.model.Message;
 import com.schoolmoney.service.MessageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
+import java.util.List;
 
-@Controller
+@RestController
+@RequestMapping("/api/messages")
 @RequiredArgsConstructor
-public class ChatController {
+public class MessageHistoryController {
 
     private final MessageService messageService;
-    private final SimpMessagingTemplate messagingTemplate;
 
-    @MessageMapping("/chat.class")
-    public void sendClassMessage(@Payload ChatMessageRequest request, Principal principal) {
-        if (principal == null) return;
-        Message savedMessage = messageService.saveMessage(principal.getName(), request);
-        messagingTemplate.convertAndSend("/topic/class/" + request.getClassId(), savedMessage);
+    @GetMapping("/class/{classId}")
+    public ResponseEntity<List<Message>> getClassHistory(@PathVariable String classId) {
+        return ResponseEntity.ok(messageService.getClassHistory(classId));
     }
 
-    @MessageMapping("/chat.private")
-    public void sendPrivateMessage(@Payload ChatMessageRequest request, Principal principal) {
-        if (principal == null) return;
-        Message savedMessage = messageService.saveMessage(principal.getName(), request);
-        messagingTemplate.convertAndSendToUser(request.getReceiverId(), "/queue/messages", savedMessage);
+    @GetMapping("/private")
+    public ResponseEntity<List<Message>> getPrivateHistory(@RequestAttribute("userId") String userId) {
+        return ResponseEntity.ok(messageService.getPrivateHistory(userId));
     }
 }

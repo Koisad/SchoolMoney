@@ -11,6 +11,7 @@ import com.schoolmoney.model.enums.FundraiserStatus;
 import com.schoolmoney.model.enums.TransactionType;
 import com.schoolmoney.repository.ChildRepository;
 import com.schoolmoney.repository.FundraiserRepository;
+import com.schoolmoney.repository.SchoolClassRepository;
 import com.schoolmoney.repository.TransactionRepository;
 import com.schoolmoney.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class TransactionService {
     private final UserRepository userRepository;
     private final FundraiserRepository fundraiserRepository;
     private final ChildRepository childRepository;
+    private final SchoolClassRepository schoolClassRepository;
 
     @Transactional
     public User depositFunds(String userId, DepositRequest request) {
@@ -127,10 +129,12 @@ public class TransactionService {
     }
 
     public List<Transaction> getFundraiserTransactions(String fundraiserId) {
+        fundraiserRepository.findById(fundraiserId).orElseThrow(() -> new RuntimeException("Fundraiser not found"));
         return transactionRepository.findByFundraiserId(fundraiserId);
     }
 
     public List<Transaction> getClassTransactions(String classId) {
+        schoolClassRepository.findById(classId).orElseThrow(() -> new RuntimeException("Class not found"));
         return transactionRepository.findByClassId(classId);
     }
 }

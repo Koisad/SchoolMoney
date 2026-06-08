@@ -5,6 +5,10 @@ spring:
     mongodb:
       uri: mongodb://admin:admin@localhost:27017/schoolmoney_db?authSource=admin
 
+server:
+  error:
+    include-message: always
+
 jwt:
   secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
   expirationMs: 86400000

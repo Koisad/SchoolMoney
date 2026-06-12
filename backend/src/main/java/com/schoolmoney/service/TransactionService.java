@@ -128,6 +128,59 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
+    @Transactional
+    public Transaction refundPayment(String userId, String fundraiserId, String childId) {
+        Fundraiser fundraiser = fundraiserRepository.findById(fundraiserId)
+                .orElseThrow(() -> new RuntimeException("Fundraiser not found"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (fundraiser.getStatus() == FundraiserStatus.CLOSED) {
+            throw new RuntimeException("Cannot refund from a closed fundraiser");
+        }
+
+        List<Transaction> payments = transactionRepository.findByFundraiserIdAndChildIdAndType(fundraiserId, childId, TransactionType.PAYMENT_FOR_CHILD);
+        if (payments.isEmpty()) {
+            throw new RuntimeException("Payment not found");
+        }
+
+        // Allow refund if the user was the original payer or if they are the treasurer (or just payer for simplicity)
+        Transaction payment = payments.get(0);
+        if (!payment.getPayerId().equals(userId)) {
+            throw new RuntimeException("Only the original payer can refund this payment");
+        }
+
+        // Check if it's already refunded
+        List<Transaction> refunds = transactionRepository.findByFundraiserIdAndChildIdAndType(fundraiserId, childId, TransactionType.REFUND);
+        if (!refunds.isEmpty()) {
+            throw new RuntimeException("Payment already refunded");
+        }
+
+        if (fundraiser.getBalance().compareTo(payment.getAmount()) < 0) {
+            throw new RuntimeException("Fundraiser balance is too low for a refund");
+        }
+
+        // Process refund
+        fundraiser.setBalance(fundraiser.getBalance().subtract(payment.getAmount()));
+        fundraiserRepository.save(fundraiser);
+
+        user.setBalance(user.getBalance().add(payment.getAmount()));
+        userRepository.save(user);
+
+        Transaction refundTx = Transaction.builder()
+                .fromAccountNumber(fundraiser.getVirtualAccountNumber())
+                .toAccountNumber(user.getVirtualAccountNumber())
+                .amount(payment.getAmount())
+                .type(TransactionType.REFUND)
+                .fundraiserId(fundraiser.getId())
+                .classId(fundraiser.getClassId())
+                .childId(childId)
+                .payerId(user.getId())
+                .build();
+
+        return transactionRepository.save(refundTx);
+    }
+
     public List<Transaction> getFundraiserTransactions(String fundraiserId) {
         fundraiserRepository.findById(fundraiserId).orElseThrow(() -> new RuntimeException("Fundraiser not found"));
         return transactionRepository.findByFundraiserId(fundraiserId);

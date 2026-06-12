@@ -94,8 +94,12 @@ public class ChildService {
         SchoolClass schoolClass = schoolClassRepository.findById(classId)
                 .orElseThrow(() -> new RuntimeException("Class not found"));
 
-        if (!schoolClass.getTreasurerId().equals(userId)) {
-            throw new RuntimeException("Only treasurer can view all children in class");
+        boolean isTreasurer = schoolClass.getTreasurerId().equals(userId);
+        boolean hasChildInClass = childRepository.findByParentId(userId).stream()
+                .anyMatch(c -> classId.equals(c.getClassId()));
+
+        if (!isTreasurer && !hasChildInClass) {
+            throw new RuntimeException("Only treasurer or parents in this class can view the children");
         }
 
         return childRepository.findByClassId(classId);

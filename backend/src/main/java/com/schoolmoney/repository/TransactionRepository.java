@@ -11,4 +11,5 @@ public interface TransactionRepository extends MongoRepository<Transaction, Stri
     List<Transaction> findByFundraiserId(String fundraiserId);
     List<Transaction> findByClassId(String classId);
     List<Transaction> findByPayerId(String payerId);
+    List<Transaction> findByFundraiserIdAndChildIdAndType(String fundraiserId, String childId, com.schoolmoney.model.enums.TransactionType type);
 }

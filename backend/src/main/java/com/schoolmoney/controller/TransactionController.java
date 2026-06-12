@@ -34,6 +34,14 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.withdrawFromFundraiser(userId, request));
     }
 
+    @PostMapping("/refund/{fundraiserId}/{childId}")
+    public ResponseEntity<Transaction> refundPayment(
+            @PathVariable String fundraiserId,
+            @PathVariable String childId,
+            @RequestAttribute("userId") String userId) {
+        return ResponseEntity.ok(transactionService.refundPayment(userId, fundraiserId, childId));
+    }
+
     @GetMapping("/fundraiser/{fundraiserId}")
     public ResponseEntity<List<Transaction>> getFundraiserReport(@PathVariable String fundraiserId) {
         return ResponseEntity.ok(transactionService.getFundraiserTransactions(fundraiserId));

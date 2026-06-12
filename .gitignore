@@ -22,3 +22,13 @@ Thumbs.db
 !.env.example
 postgres-data/
 docker-data/
+
+# Uploads & Images
+uploads/
+backend/uploads/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+*.svg

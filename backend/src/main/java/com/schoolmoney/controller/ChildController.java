@@ -32,6 +32,11 @@ public class ChildController {
         return ResponseEntity.ok(childService.assignToClass(childId, inviteToken, userId));
     }
 
+    @PostMapping("/{childId}/leave-class")
+    public ResponseEntity<Child> leaveClass(@PathVariable String childId, @RequestAttribute("userId") String userId) {
+        return ResponseEntity.ok(childService.leaveClass(childId, userId));
+    }
+
     @PutMapping("/{childId}")
     public ResponseEntity<Child> updateChild(
             @PathVariable String childId,

@@ -48,6 +48,18 @@ public class ChildService {
         return childRepository.save(child);
     }
 
+    public Child leaveClass(String childId, String parentId) {
+        Child child = childRepository.findById(childId)
+                .orElseThrow(() -> new RuntimeException("Child not found"));
+
+        if (!child.getParentId().equals(parentId)) {
+            throw new RuntimeException("Not your child");
+        }
+
+        child.setClassId(null);
+        return childRepository.save(child);
+    }
+
     public Child updateChild(String childId, UpdateChildRequest request, String parentId) {
         Child child = childRepository.findById(childId)
                 .orElseThrow(() -> new RuntimeException("Child not found"));

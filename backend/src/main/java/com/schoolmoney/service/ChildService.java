@@ -1,6 +1,7 @@
 package com.schoolmoney.service;
 
 import com.schoolmoney.dto.ChildRequest;
+import com.schoolmoney.dto.UpdateChildRequest;
 import com.schoolmoney.model.Child;
 import com.schoolmoney.model.SchoolClass;
 import com.schoolmoney.repository.ChildRepository;
@@ -44,4 +45,34 @@ public class ChildService {
 
         return childRepository.save(child);
     }
-}
+
+    public Child updateChild(String childId, UpdateChildRequest request, String parentId) {
+        Child child = childRepository.findById(childId)
+                .orElseThrow(() -> new RuntimeException("Child not found"));
+
+        if (!child.getParentId().equals(parentId)) {
+            throw new RuntimeException("Not your child");
+        }
+
+        if (request.getFirstName() != null) {
+            child.setFirstName(request.getFirstName());
+        }
+        if (request.getLastName() != null) {
+            child.setLastName(request.getLastName());
+        }
+        child.setAvatarUrl(request.getAvatarUrl());
+
+        return childRepository.save(child);
+    }
+
+    public void deleteChild(String childId, String parentId) {
+        Child child = childRepository.findById(childId)
+                .orElseThrow(() -> new RuntimeException("Child not found"));
+
+        if (!child.getParentId().equals(parentId)) {
+            throw new RuntimeException("Not your child");
+        }
+
+        childRepository.delete(child);
+    }
+}

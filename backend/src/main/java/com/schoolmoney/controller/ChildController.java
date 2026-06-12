@@ -1,6 +1,7 @@
 package com.schoolmoney.controller;
 
 import com.schoolmoney.dto.ChildRequest;
+import com.schoolmoney.dto.UpdateChildRequest;
 import com.schoolmoney.model.Child;
 import com.schoolmoney.service.ChildService;
 import lombok.RequiredArgsConstructor;
@@ -30,4 +31,20 @@ public class ChildController {
     public ResponseEntity<Child> assignToClass(@PathVariable String childId, @PathVariable String inviteToken, @RequestAttribute("userId") String userId) {
         return ResponseEntity.ok(childService.assignToClass(childId, inviteToken, userId));
     }
-}
+
+    @PutMapping("/{childId}")
+    public ResponseEntity<Child> updateChild(
+            @PathVariable String childId,
+            @RequestBody UpdateChildRequest request,
+            @RequestAttribute("userId") String userId) {
+        return ResponseEntity.ok(childService.updateChild(childId, request, userId));
+    }
+
+    @DeleteMapping("/{childId}")
+    public ResponseEntity<Void> deleteChild(
+            @PathVariable String childId,
+            @RequestAttribute("userId") String userId) {
+        childService.deleteChild(childId, userId);
+        return ResponseEntity.noContent().build();
+    }
+}

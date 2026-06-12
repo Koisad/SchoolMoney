@@ -3,6 +3,7 @@ package com.schoolmoney.service;
 import com.schoolmoney.dto.AuthResponse;
 import com.schoolmoney.dto.LoginRequest;
 import com.schoolmoney.dto.RegisterRequest;
+import com.schoolmoney.dto.UpdateUserRequest;
 import com.schoolmoney.model.User;
 import com.schoolmoney.model.enums.Role;
 import com.schoolmoney.repository.UserRepository;
@@ -62,6 +63,30 @@ public class AuthService {
 
         return AuthResponse.builder()
                 .token(token)
+                .id(user.getId())
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .role(user.getRole())
+                .build();
+    }
+
+    public AuthResponse updateProfile(String userId, UpdateUserRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (request.getFirstName() != null) {
+            user.setFirstName(request.getFirstName());
+        }
+        if (request.getLastName() != null) {
+            user.setLastName(request.getLastName());
+        }
+        user.setAvatarUrl(request.getAvatarUrl());
+
+        userRepository.save(user);
+
+        return AuthResponse.builder()
+                .token(jwtUtil.generateToken(user.getId(), user.getRole().name()))
                 .id(user.getId())
                 .email(user.getEmail())
                 .firstName(user.getFirstName())

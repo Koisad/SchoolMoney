@@ -1,12 +1,13 @@
 package com.schoolmoney.controller;
 
+import com.schoolmoney.dto.AuthResponse;
+import com.schoolmoney.dto.UpdateUserRequest;
 import com.schoolmoney.dto.UserSummaryDto;
 import com.schoolmoney.repository.UserRepository;
+import com.schoolmoney.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserRepository userRepository;
+    private final AuthService authService;
 
     @GetMapping
     public ResponseEntity<List<UserSummaryDto>> getAllUsers() {
@@ -31,5 +33,12 @@ public class UserController {
                         .build())
                 .collect(Collectors.toList());
         return ResponseEntity.ok(users);
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<AuthResponse> updateProfile(
+            @RequestBody UpdateUserRequest request,
+            @RequestAttribute("userId") String userId) {
+        return ResponseEntity.ok(authService.updateProfile(userId, request));
     }
 }

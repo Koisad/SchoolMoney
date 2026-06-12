@@ -50,4 +50,8 @@ public class AdminService {
         fundraiser.setBlocked(!fundraiser.isBlocked());
         return fundraiserRepository.save(fundraiser);
     }
+
+    public List<SchoolClass> getAllClasses() {
+        return schoolClassRepository.findAll();
+    }
 }

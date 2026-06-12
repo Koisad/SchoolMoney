@@ -66,4 +66,10 @@ public class AdminController {
         verifyAdmin(role);
         return ResponseEntity.ok(transactionService.getClassTransactions(classId));
     }
+
+    @GetMapping("/classes")
+    public ResponseEntity<List<com.schoolmoney.model.SchoolClass>> getAllClasses(@RequestAttribute("userRole") String role) {
+        verifyAdmin(role);
+        return ResponseEntity.ok(adminService.getAllClasses());
+    }
 }

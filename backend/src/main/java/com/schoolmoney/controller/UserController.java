@@ -41,4 +41,9 @@ public class UserController {
             @RequestAttribute("userId") String userId) {
         return ResponseEntity.ok(authService.updateProfile(userId, request));
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<com.schoolmoney.model.User> getCurrentUser(@RequestAttribute("userId") String userId) {
+        return ResponseEntity.ok(authService.getCurrentUser(userId));
+    }
 }

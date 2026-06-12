@@ -95,6 +95,11 @@ public class AuthService {
                 .build();
     }
 
+    public User getCurrentUser(String userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
     private String generateVirtualAccountNumber() {
         return UUID.randomUUID().toString().replaceAll("[^0-9]", "").substring(0, 16);
     }

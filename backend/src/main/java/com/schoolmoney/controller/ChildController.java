@@ -40,6 +40,13 @@ public class ChildController {
         return ResponseEntity.ok(childService.updateChild(childId, request, userId));
     }
 
+    @GetMapping("/class/{classId}")
+    public ResponseEntity<List<Child>> getClassChildren(
+            @PathVariable String classId,
+            @RequestAttribute("userId") String userId) {
+        return ResponseEntity.ok(childService.getClassChildren(classId, userId));
+    }
+
     @DeleteMapping("/{childId}")
     public ResponseEntity<Void> deleteChild(
             @PathVariable String childId,

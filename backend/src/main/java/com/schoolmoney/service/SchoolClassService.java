@@ -2,10 +2,13 @@ package com.schoolmoney.service;
 
 import com.schoolmoney.dto.ClassRequest;
 import com.schoolmoney.model.SchoolClass;
+import com.schoolmoney.model.Child;
+import com.schoolmoney.repository.ChildRepository;
 import com.schoolmoney.repository.SchoolClassRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,6 +17,7 @@ import java.util.UUID;
 public class SchoolClassService {
 
     private final SchoolClassRepository schoolClassRepository;
+    private final ChildRepository childRepository;
 
     public SchoolClass createClass(ClassRequest request, String userId) {
         if (schoolClassRepository.existsByName(request.getName())) {
@@ -35,6 +39,18 @@ public class SchoolClassService {
     }
 
     public List<SchoolClass> getMyClasses(String userId) {
-        return schoolClassRepository.findByTreasurerId(userId);
+        List<SchoolClass> classes = new ArrayList<>(schoolClassRepository.findByTreasurerId(userId));
+        List<Child> myChildren = childRepository.findByParentId(userId);
+        
+        for (Child child : myChildren) {
+            if (child.getClassId() != null) {
+                schoolClassRepository.findById(child.getClassId()).ifPresent(c -> {
+                    if (!classes.contains(c)) {
+                        classes.add(c);
+                    }
+                });
+            }
+        }
+        return classes;
     }
 }

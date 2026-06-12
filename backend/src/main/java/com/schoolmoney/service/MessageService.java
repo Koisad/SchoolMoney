@@ -43,6 +43,6 @@ public class MessageService {
     }
 
     public List<Message> getPrivateHistory(String userId) {
-        return messageRepository.findByReceiverIdOrderByTimestampAsc(userId);
+        return messageRepository.findBySenderIdOrReceiverIdOrderByTimestampAsc(userId, userId);
     }
 }

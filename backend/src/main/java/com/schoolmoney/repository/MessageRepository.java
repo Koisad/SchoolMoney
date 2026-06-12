@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends MongoRepository<Message, String> {
     List<Message> findByClassIdOrderByTimestampAsc(String classId);
-    List<Message> findByReceiverIdOrderByTimestampAsc(String receiverId);
+    List<Message> findBySenderIdOrReceiverIdOrderByTimestampAsc(String senderId, String receiverId);
 }

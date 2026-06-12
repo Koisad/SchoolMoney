@@ -30,5 +30,6 @@ public class ChatController {
         if (principal == null) return;
         Message savedMessage = messageService.saveMessage(principal.getName(), request);
         messagingTemplate.convertAndSendToUser(request.getReceiverId(), "/queue/messages", savedMessage);
+        messagingTemplate.convertAndSendToUser(principal.getName(), "/queue/messages", savedMessage);
     }
 }
